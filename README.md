@@ -4,7 +4,7 @@ Classical Optimization Algorithms
 
 ## Algorithms
 
-### Robust Search
+### Exhaustive Search
 
 Example:
 
@@ -13,7 +13,7 @@ Example:
 f(x) = x^2 + 54 / x
 
 a, b, n = 0, 5, 10
-robustSearch(f, a, b, n)
+exhaustiveSearch(f, a, b, n)
 ```
 
 Output: `(2.5, 3.5)`

@@ -1,4 +1,4 @@
-function robustSearch(f::Function, a::Real, b::Real, n::Int)
+function exhaustiveSearch(f::Function, a::Real, b::Real, n::Int)
     Δx = (b - a) / n
 
     x1 = a
