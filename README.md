@@ -17,3 +17,5 @@ robustSearch(f, a, b, n)
 ```
 
 Output: `(2.5, 3.5)`
+
+![Robust Search](https://www.candaana.com/report/wp-content/uploads/2018/08/rs-ejemplo.gif)
