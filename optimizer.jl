@@ -1,3 +1,5 @@
+import Printf.@printf
+
 function exhaustiveSearch(f::Function, a::Real, b::Real, n::Int; debug::Bool=false)
     Δx = (b - a) / n
 
