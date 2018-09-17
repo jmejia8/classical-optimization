@@ -84,3 +84,48 @@ function intervalHalving(f::Function, a::Real, b::Real, ε::Float64; debug::Bool
     return a, b
 
 end
+
+function goldenSection(f::Function, a::Real, b::Real, ε::Float64; debug::Bool=false)
+    fw(w) = f(w*(b - a)+a)
+
+    # configuration
+    aw, bw = 0.0, 1.0
+    Lw = bw - aw
+    τ = (√(5) + 1) \ 2
+
+    w1 = aw + τ
+    w2 = bw - τ
+    
+    fw1, fw2 = fw(w1), fw(w2)
+    k = 1
+    
+    while abs(Lw) > ε
+        Lw = τ^k
+        if fw1 < fw2
+            aw = w2
+            
+            w2 = w1
+            w1 = aw + τ * Lw        
+            
+            fw2 = fw1
+            fw1 = fw(w1)
+    
+        else
+            bw = w1
+           
+            w1 = w2
+            w2 = bw - τ * Lw
+    
+            fw1 = fw2
+            fw2 = fw(w2)
+            
+        end
+        
+        k += 1
+        debug && @printf("k = %d \t aw = %.4f, bw = %.4f \t f(w1) = %.4f  f(w2) = %.4f\n",k, aw, bw, fw1, fw2)
+
+    end
+
+
+    return aw*(b-a) + a, bw*(b-a) + a
+end
