@@ -6,6 +6,8 @@ function test()
     exhaustiveSearch(f, 0, 5, 2000)
     boundingPhase(f, 0.6, 0.5)
     intervalHalving(f, 0, 5, 1e-3)
+    goldenSection(f, 0, 5, 1e-3)
+    
 end
 
 test()
