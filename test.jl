@@ -7,8 +7,8 @@ function test()
     boundingPhase(f, 0.6, 0.5)
     intervalHalving(f, 0, 5, 1e-3)
     goldenSection(f, 0, 5, 1e-3)
-    fibonacciSearch(f, 0, 5, 20; debug=true)
-    
+    fibonacciSearch(f, 0, 5, 20)
+    powell(f, 1, 0.1, 1e-3, 1e-3; debug=true)
 end
 
 test()
