@@ -85,6 +85,63 @@ function intervalHalving(f::Function, a::Real, b::Real, ε::Float64; debug::Bool
 
 end
 
+function fibonacciSequence(n)
+    n += 2
+    sequence = zeros(n)
+    sequence[1] = 1
+    sequence[2] = 1
+
+    for i = 3:n
+        sequence[i] = sequence[i-1] + sequence[i-2]
+    end
+
+    return sequence
+
+end
+
+function fibonacciSearch(f::Function, a::Real, b::Real, n::Int; debug::Bool=false)
+    F = fibonacciSequence(n)
+
+    L = b - a
+    k = 2
+    
+    Lk = (F[n-k+2] / F[n+2]) * L
+
+    x1, x2 = a + Lk, b - Lk
+    f1, f2 = f(x1), f(x2)
+
+    while k < n
+
+        k += 1
+        Lk = (F[n-k+2] / F[n+2]) * L
+
+        if f1 > f2
+            a = x1
+
+            x1, x2 = x2, b - Lk
+            f1, f2 = f2, f(x2)
+        elseif f1 < f2
+            b = x2
+
+            x2, x1 = x1, a +  Lk
+
+            f2, f1 = f1, f(x1)
+        else
+            a, b = x1, x2
+            x1, x2 = a + Lk, b - Lk
+             
+            f1, f2 = f(x1), f(x2)
+        end
+
+        debug && @printf("k = %d\t x1 = %.4f, x2 = %.4f \t f1 = %.4f \t f2 = %.4f \n", k, x1, x2, f1, f2)
+
+    end
+
+    return x1, x2
+
+end
+
+
 function goldenSection(f::Function, a::Real, b::Real, ε::Float64; debug::Bool=false)
     fw(w) = f(w*(b - a)+a)
 
