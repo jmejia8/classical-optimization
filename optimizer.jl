@@ -238,3 +238,80 @@ function powell(f::Function, x::Real, Δ::Real, TOL1::Real, TOL2::Real; debug::B
 
     end
 end
+
+
+function newtonRhapson(f, x, Δx, ε::Float64; debug::Bool=false)
+    df(f, x)  = (f(x + Δx) - f(x - Δx)) / (2Δx)
+    ddf(f, x) = (f(x + Δx) -2f(x) + f(x - Δx)) / (Δx)^2
+
+    k = 1
+    while true
+        dfx = df(f, x)
+        x -= dfx / ddf(f, x)
+
+        if  isnan(dfx) || abs(dfx) < ε
+            return x
+        end
+
+        debug && @printf("x = %.4f \t f = %.4f\n", x, f(x))
+    end
+
+
+end
+
+
+function bisection(f, a, b, ε::Float64; debug::Bool=false)
+    df(x)  = 2x - 54/x^2
+    # ddf(f, x) = (f(x + Δx) -2f(x) + f(x - Δx)) / (Δx)^2
+
+    k = 1
+    while true
+        z = (a + b) / 2.0
+        fp = df(z)
+
+        if abs(fp) < ε 
+            return z
+        end
+
+        if fp <= 0
+            a = z
+        elseif fp > 0
+            b = z
+        end
+
+        k += 1
+        debug && @printf("k = %d \t x = %.4f \t f = %.4f \t f' = %.4f\n", k, z, f(z), fp)
+
+    end
+
+
+end
+
+function secant(f, a, b, ε::Float64; debug::Bool=false)
+    df(x)  = 2x - 54/x^2
+
+    k = 1
+    while true
+        fpL = df(a)
+        fpR = df(b)
+        z = b - (fpR * (b - a)) / ( fpR - fpL )
+
+        fp = df(z)
+
+        if abs(fp) <= ε 
+            return z
+        end
+
+        if fp < 0
+            a = z
+        elseif fp > 0
+            b = z
+        end
+
+        k += 1
+        debug && @printf("k = %d \t x = %.4f \t f = %.4f \t f' = %.4f\n", k, z, f(z), fp)
+
+    end
+
+
+end
