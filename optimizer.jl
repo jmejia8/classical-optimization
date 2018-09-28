@@ -1,4 +1,5 @@
 import Printf.@printf
+using SymPy
 
 function exhaustiveSearch(f::Function, a::Real, b::Real, n::Int; debug::Bool=false)
     Δx = (b - a) / n
@@ -312,6 +313,88 @@ function secant(f, a, b, ε::Float64; debug::Bool=false)
         debug && @printf("k = %d \t x = %.4f \t f = %.4f \t f' = %.4f\n", k, z, f(z), fp)
 
     end
+
+
+end
+
+
+function cubic(f, x0, Δ, ε1::Float64, ε2::Float64; debug::Bool=false)
+    @vars x
+    df(a) = Float64(subs(diff(f), (x, a)))
+
+    df_x = df(x0)
+    df_x > 0 && (Δ *= -1.0 )
+
+    xx  = x1  = x2 = x0
+    df1 = df2 = df_x
+
+    k = 0
+    while true
+        x_old    = xx
+        df_x_old = df_x
+
+        xx   += 2^k * Δ
+        df_x = df(xx)
+
+        if df_x * df_x_old <= 0
+            x1 = x_old
+            x2 = xx
+
+            df1 = df_x_old
+            df2 = df_x
+            break
+        end
+        k += 1
+    end
+
+    f1 = f(x1)
+    f2 = f(x2)
+
+
+    while true
+        z = ( 3*(f1 - f2) / (x2 - x1) ) + df1 + df2
+        
+        w = sqrt(z^2 - df1*df2)
+        w = x1 > x2 ? -w : w
+
+        μ = (df2 + w - z) / (df2 - df1 + 2w)
+
+        if μ < 0
+            x̅ = x2
+        elseif μ > 1
+            x̅ = x1
+        else
+            x̅ = x2 - μ*(x2 - x1)
+        end
+
+        fx̅ = f(x̅)
+        
+        if !( fx̅ < f1 )
+
+            while fx̅ > f1
+                x̅ -= 0.5*(x̅ - x1)
+                fx̅ = f(x̅)
+            end
+
+        end
+
+        df_x̅ = df(x̅)
+
+        debug && @printf("x̅ = %.4f \t f = %.4f\n", x̅, f(x̅))
+
+
+        if abs(df_x̅) <= ε1 || abs((x̅ - x1)/x̅) <= ε2
+            return x̅
+        elseif df_x̅ * df1 < 0
+            x2 = x̅
+            f2 = fx̅
+        else
+            x1 = x̅
+            f1 = fx̅
+        end
+    end
+
+
 
 
 end
