@@ -1,5 +1,7 @@
 import Printf.@printf
 using SymPy
+import LinearAlgebra: norm
+
 
 function exhaustiveSearch(f::Function, a::Real, b::Real, n::Int; debug::Bool=false)
     Δx = (b - a) / n
@@ -397,4 +399,92 @@ function cubic(f, x0, Δ, ε1::Float64, ε2::Float64; debug::Bool=false)
 
 
 
+end
+
+function evop(f, x0, Δ, ε::Float64; debug::Bool=false)
+
+    n = length(x0)
+    
+    x̅  = x0
+    fx̅ = f(x̅)
+
+    hyper_cube = zeros(2^n, n)
+    fs = zeros(2^n)
+
+    Δ2 = 0.5Δ
+    while norm(Δ) >= ε
+
+        for i = 1:2^n
+            negat = zeros(Bool, n)
+            neg = digits(i-1, base=2) .> 0
+
+
+            negat[1:length(neg)] = reverse(neg)
+
+            posit = .! negat
+            
+            hyper_cube[i,posit] = x̅[posit] .+ Δ2[posit]
+            hyper_cube[i,negat] = x̅[negat] .- Δ2[negat]
+
+        end
+
+        for i = 1:2^n
+            fs[i] = f(hyper_cube[i,:])
+        end
+
+        i_best = argmin(fs)
+
+        if fs[i_best] < fx̅ 
+            fx̅ = fs[i_best]
+            x̅ = hyper_cube[i_best,:]
+        else
+            Δ = Δ2
+            Δ2 = 0.5Δ2
+        end
+
+        println(x̅)
+        debug && @printf("x̅ = [%.4f, %.4f] \t f = %.4f\n", x̅[1], x̅[2], f(x̅))
+
+    end
+
+    return x̅
+end
+
+function randomSearch(f, x1, λ, ε, N; debug::Bool=false)
+    D = length(x1)
+    i = 1
+
+    f1 = f(x1)
+
+    while λ > ε
+        r = -1.0 .+ 2rand(D)
+
+        while norm(r) > 1.0
+            r = -1.0 .+ 2rand(D)
+        end
+
+        u = r ./ norm(r)
+
+        x = x1 + λ*u
+        println(x)
+
+        fx = f(x)
+
+        if fx < f1
+            i = 1
+            x1 = x
+            f1 = fx
+        elseif i <= N
+            i += 1
+        else
+            λ /= 2
+        end
+
+        # println(x̅)
+        debug && @printf("x1 = [%.4f, %.4f] \t f = %.4f\n", x1[1], x1[2], f(x1))
+
+
+    end
+
+    return x1
 end
