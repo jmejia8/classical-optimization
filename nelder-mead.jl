@@ -10,8 +10,8 @@ function nelder_mead(f, simplex::Array{Solution}; α::Real = 1.0,  β::Real = 0.
     while true
         sort!(simplex, lt = (p, q) -> p.f < q.f)
 
-        best = simplex[1]
-        worst = simplex[end]
+        best  = deepcopy(simplex[1])
+        worst = deepcopy(simplex[end])
         # x_g = 
 
         # calculate centroid
@@ -20,6 +20,8 @@ function nelder_mead(f, simplex::Array{Solution}; α::Real = 1.0,  β::Real = 0.
         for i = 1:N-1
             c += simplex[i].x
         end
+
+        c /= N
 
         # perform reflection
         x_r = (1.0 + α)*c - α*worst.x
@@ -42,8 +44,9 @@ function nelder_mead(f, simplex::Array{Solution}; α::Real = 1.0,  β::Real = 0.
         end
 
         if is_worst
-            if f_r < simplex[end].f
+            if f_r < worst.f
                 simplex[end].x = x_r
+                simplex[end].f = f_r
             end
 
             # contraction
@@ -52,7 +55,7 @@ function nelder_mead(f, simplex::Array{Solution}; α::Real = 1.0,  β::Real = 0.
             if f_contraction > worst.f
                 # shrinkage
                 for i = 1:N
-                    simplex[i].x = 0.5*(simplex[i].x + simplex[1].x)
+                    simplex[i].x = 0.5*(simplex[i].x + best.x)
                     simplex[i].f = f(simplex[i].x)
                 end
             else
