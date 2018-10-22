@@ -37,10 +37,11 @@ function nelder_mead(f, simplex::Array{Solution}; α::Real = 1.0,  β::Real = 0.
         for i = 1:N-1
             if f_r <= simplex[i].f
                 is_worst = false
+                break
             end
         end
 
-        if !is_worst
+        if is_worst
             if f_r < simplex[end].f
                 simplex[end].x = x_r
             end
