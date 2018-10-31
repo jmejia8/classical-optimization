@@ -1,6 +1,6 @@
 include("optimizer.jl")
 
-function powell(f::Function, x0::Array{Float64}, unidirectionalSearch::Function; Basis = nothing, ε = 1e-3)
+function powell(f::Function, x0::Array{Float64}, unidirectionalSearch::Function; Basis = nothing, ε = 1e-3, debug::Bool = false)
     D = length(x0)
     
     if Basis == nothing
@@ -25,7 +25,8 @@ function powell(f::Function, x0::Array{Float64}, unidirectionalSearch::Function;
 
         d = x - x1
 
-        println(x)
+        debug && print("x = ", x)
+        debug && @printf("\tf(x) = %.3g \t det(d) =  %.2f\n", f(x), norm(d))
 
         if norm(d) < ε || det(Basis) == 0
             break
@@ -46,18 +47,19 @@ function test()
     f(x) = (x[1]^2 + x[2] - 11)^2 + (x[1] + x[2]^2 - 7)^2
 
     unidirectionalSearch(f, x, s) = begin
-        Δ = 0.5
-        λ0 = 1.0
-        ε_gs = 1e-4
-        a,b = boundingPhase( λ -> f(x + λ*s), λ0, Δ)
-        a,b = goldenSection( λ -> f(x + λ*s), a, b, ε_gs)
+        Δ = 0.1
+        λ0 = 0.0
+        a,b = boundingPhase( λ -> f(x + λ*s), λ0, Δ; debug = true)
+        
+        ε_gs = 1e-10
+        a2,b2 = goldenSection( λ -> f(x + λ*s), a, b, ε_gs; debug = true)
 
-        λ = a
+        λ = b2
         x + λ*s
     end
 
     x0 = [0.0, 4]
-    powell(f, x0, unidirectionalSearch)
+    powell(f, x0, unidirectionalSearch; debug = true)
 
 
 end
