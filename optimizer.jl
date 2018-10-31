@@ -1,6 +1,6 @@
 import Printf.@printf
 using SymPy
-import LinearAlgebra: norm
+import LinearAlgebra: norm, det
 
 
 function exhaustiveSearch(f::Function, a::Real, b::Real, n::Int; debug::Bool=false)
