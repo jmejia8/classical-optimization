@@ -47,12 +47,11 @@ function test()
     f(x) = (x[1]^2 + x[2] - 11)^2 + (x[1] + x[2]^2 - 7)^2
 
     unidirectionalSearch(f, x, s) = begin
-        Δ = 0.1
-        λ0 = 0.0
-        a,b = boundingPhase( λ -> f(x + λ*s), λ0, Δ; debug = true)
-        
+        Δ  = 0.5
+        λ0 = -0.5
+        a, b = boundingPhase( λ -> f(x + λ*s), λ0, Δ; debug = false)
         ε_gs = 1e-10
-        a2,b2 = goldenSection( λ -> f(x + λ*s), a, b, ε_gs; debug = true)
+        a2,b2 = goldenSection( λ -> f(x + λ*s), a, b, ε_gs; debug = false)
 
         λ = b2
         x + λ*s
