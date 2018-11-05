@@ -34,7 +34,7 @@ function test()
 
     unidirectionalSearch(f, x, ∇fx, ε = 1e-5) = begin
         Δ = 0.5
-        λ0 = 1.0
+        λ0 = 0.0
         a,b = boundingPhase( λ -> f(x - λ*∇fx), λ0, Δ; debug = false)
         
         a2,b2 = goldenSection( λ -> f(x - λ*∇fx), a, b, ε; debug = false)
