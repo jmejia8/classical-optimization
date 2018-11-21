@@ -21,7 +21,7 @@ function exhaustiveSearch(f::Function, a::Real, b::Real, n::Int; debug::Bool=fal
         x3 = x2 + Δx
         
         if x3 > b
-            debug && warn("No minimum found in (a, b) or the minimum is at limits.")
+            debug && @warn "No minimum found in (a, b) or the minimum is at limits."
             return a, b
         end
         
@@ -35,7 +35,7 @@ function boundingPhase(f::Function, x0::Real, Δ::Float64; debug::Bool=false)
         Δ *= -1
         debug && println("Δ is negative")
     else
-        warn("Nothing to do...")
+        @warn "Nothing to do..."
     end
 
     k = 0
